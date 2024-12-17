@@ -47,17 +47,13 @@ app.get('/api/hello', function (req, res) {
     res.json({greeting: 'hello API'});
 });
 
-// Endpoint per GET /api/shorturl/:short_url
-app.get('/api/shorturl/:short_url', function (req, res) {
-    const shortUrl = parseInt(req.params.short_url);
-
-    // Trova l'URL nel database
-    const entry = urlDatabase.find((item) => item.short_url === shortUrl);
-    if (entry) {
-        return res.redirect(entry.original_url);
-    } else {
-        return res.json({error: 'No short URL found for the given input'});
-    }
+// Endpoint per POST /api/shorturl
+app.post('/api/shorturl', validateUrl, handleUrl, function (req, res) {
+    // Risposta JSON con l'URL abbreviato
+    res.json({
+        original_url: req.shortUrlEntry.original_url,
+        short_url: req.shortUrlEntry.short_url,
+    });
 });
 
 app.listen(port, function () {
